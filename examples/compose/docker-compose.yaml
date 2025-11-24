@@ -1,0 +1,12 @@
+services:
+  audiobookshelf-exporter:
+    image: ghcr.io/operationeth/audiobookshelf-exporter:latest
+    container_name: audiobookshelf-exporter
+    ports:
+      - "9860:9860"
+    environment:
+      ABS_URL: "http://192.168.0.106:13378"
+      ABS_API_KEY: "your_api_key_here"      
+      EXPORTER_PORT: 9860   
+    restart: unless-stopped
+    

@@ -1,0 +1,4 @@
+ - job_name: 'audiobookshelf-exporter'
+   static_configs:
+     - targets:
+         - '192.168.0.9:9680'
