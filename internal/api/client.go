@@ -100,7 +100,7 @@ func (c *Client) Libraries() ([]Library, error) {
 
 func (c *Client) LibraryDetail(id string) (*LibraryDetail, error) {
     var d LibraryDetail
-    err := c.get("/api/libraries/"+id, &d)
+    err := c.get("/api/libraries/"+id+"/stats", &d)
     return &d, err
 }
 
