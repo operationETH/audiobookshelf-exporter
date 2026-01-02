@@ -5,7 +5,7 @@ import (
     "time"
 
     "github.com/prometheus/client_golang/prometheus"
-    "github.com/operationETH/audiobookshelf-exporter/internal/api"
+    "github.com/operationeth/audiobookshelf-exporter/internal/api"
 )
 
 type Exporter struct {

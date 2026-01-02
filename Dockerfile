@@ -17,7 +17,7 @@ COPY --from=builder /go/bin/audiobookshelf-exporter /go/bin/audiobookshelf-expor
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 # Metadata linking to GitHub repository
-LABEL org.opencontainers.image.source="https://github.com/operationETH/audiobookshelf-exporter"
+LABEL org.opencontainers.image.source="https://github.com/operationeth/audiobookshelf-exporter"
 
 # Prometheus metrics port (default)
 EXPOSE 9860
