@@ -1,0 +1,2 @@
+# Local docker compose overrides (example provided in examples/compose/)
+compose.yaml
