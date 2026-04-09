@@ -8,6 +8,20 @@ This exporter collects listening statistics, user activity, library metrics, and
 
 ---
 
+## Screenshots
+
+![Grafana Dashboard Screenshot 1](examples/grafana/screenshots/audiobookshelf-exporter_1.png)
+![Grafana Dashboard Screenshot 2](examples/grafana/screenshots/audiobookshelf-exporter_2.png)
+![Grafana Dashboard Screenshot 3](examples/grafana/screenshots/audiobookshelf-exporter_3.png)
+
+Example dashboard JSON:  
+`examples/grafana/audiobookshelf-dashboard.json`
+
+Import in Grafana via:  
+**Dashboards → New → Import**
+
+---
+
 ## Features
 
 - Total listening time per book, user, and device
@@ -19,37 +33,45 @@ This exporter collects listening statistics, user activity, library metrics, and
 
 ---
 
+## Configuration
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` with your Audiobookshelf URL and API key.
+
+---
+
 ## Environment Variables
 
 | Variable | Description | Default |
-|-----------|--------------|----------|
+|-----------|-------------|---------|
 | `ABS_URL` | Your Audiobookshelf base URL | `(required)` |
 | `ABS_API_KEY` | Your API key (found in Audiobookshelf user settings) | `(required)` |
-| `EXPORTER_PORT` | Port to expose metrics on  | `9860` |
-| `SCRAPE_INTERVAL_SECONDS` | How often it scrapes. | `30` |
-| `LOG_FORMAT` | Optional. `console` for dev logs. | `JSON` |
+| `EXPORTER_PORT` | Port to expose metrics on | `9860` |
+| `SCRAPE_INTERVAL_SECONDS` | How often it scrapes | `30` |
+| `LOG_FORMAT` | Optional. `console` for dev logs | `JSON` |
 
 ---
 
 ## Example Metrics
 
-`audiobookshelf_users_total`
-
-`audiobookshelf_sessions_total`
-
-`audiobookshelf_user_sessions_total`
-
-`audiobookshelf_user_listening_seconds_total`
-
-`audiobookshelf_book_listening_seconds_total`
-
-`audiobookshelf_weekday_listening_seconds_total`
+- `audiobookshelf_users_total`
+- `audiobookshelf_sessions_total`
+- `audiobookshelf_user_sessions_total`
+- `audiobookshelf_user_listening_seconds_total`
+- `audiobookshelf_book_listening_seconds_total`
+- `audiobookshelf_weekday_listening_seconds_total`
 
 ---
 
 ## Docker Usage
 
 ### Run manually
+
 ```bash
 docker run -d \
   --name audiobookshelf-exporter \
@@ -58,26 +80,22 @@ docker run -d \
   -e ABS_API_KEY="YOUR_API_KEY" \
   ghcr.io/operationeth/audiobookshelf-exporter:latest
 ```
+
 ### Docker Compose
-```bash
+
+```yaml
+services:
   audiobookshelf-exporter:
     image: ghcr.io/operationeth/audiobookshelf-exporter:latest
     container_name: audiobookshelf-exporter
     ports:
-      - 9860:9860
+      - "9860:9860"
     environment:
-      ABS_URL: http://192.168.0.106:13378
-      ABS_API_KEY: "your_api_key_here"
-      EXPORTER_PORT: 9860
+      ABS_URL: ${ABS_URL}
+      ABS_API_KEY: ${ABS_API_KEY}
+      EXPORTER_PORT: ${AUDIOBOOKSHELF_EXPORTER_PORT}
     restart: unless-stopped
-```  
-Example `.env` file:
-```bash
-ABS_URL=http://192.168.0.106:13378
-ABS_API_KEY=abc123
-AUDIOBOOKSHELF_EXPORTER_PORT=9860
 ```
 
----
-
-This wouldnt be legit if i didnt add a 👉🚀
+> [!NOTE]
+> The exporter expects `EXPORTER_PORT` internally. In larger shared `.env` files, you can map a more specific variable name like `AUDIOBOOKSHELF_EXPORTER_PORT` to it through Docker Compose.
