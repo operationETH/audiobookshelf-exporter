@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "Dashboard for the operationETH/audiobookshelf-exporter Prometheus exporter.",
+  "description": "Dashboard for audiobookshelf-exporter Prometheus exporter.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
