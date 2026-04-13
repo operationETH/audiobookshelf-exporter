@@ -1493,7 +1493,7 @@
       {
         "current": {
           "text": "prometheus",
-          "value": "ef3knlvcqlptsf"
+          "value": ""
         },
         "includeAll": false,
         "label": "Datasource",
@@ -1537,8 +1537,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "audiobookshelf-exporter-test",
-  "uid": "audiobookshelf-exporter-test",
+  "title": "audiobookshelf-exporter",
+  "uid": "audiobookshelf-exporter",
   "version": 1,
   "weekStart": ""
 }
