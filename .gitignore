@@ -1,2 +1,13 @@
-# Local docker compose overrides (example provided in examples/compose/)
-compose.yaml
+# Local docker compose overrides
+compose.override.yaml
+compose.local.yaml
+compose.*.local.yaml
+
+.env
+.env.local
+.env.production
+.env.development
+*.env
+
+dist/**
+scripts/

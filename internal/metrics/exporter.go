@@ -1,316 +1,327 @@
 package metrics
 
 import (
-    "log"
-    "time"
+	"log"
+	"time"
 
-    "github.com/prometheus/client_golang/prometheus"
-    "github.com/operationeth/audiobookshelf-exporter/internal/api"
+	"github.com/operationeth/audiobookshelf-exporter/internal/api"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type Exporter struct {
-    client *api.Client
+	client *api.Client
 
-    up          prometheus.Gauge
-    users       prometheus.Gauge
-    libItems    *prometheus.GaugeVec
-    lastSuccess prometheus.Gauge
-    lastTime    prometheus.Gauge
-    duration    prometheus.Summary
+	up          prometheus.Gauge
+	users       prometheus.Gauge
+	libItems    *prometheus.GaugeVec
+	lastSuccess prometheus.Gauge
+	lastTime    prometheus.Gauge
+	duration    prometheus.Summary
 
-    userListeningSeconds    *prometheus.GaugeVec
-    userSessionsTotal       *prometheus.GaugeVec
-    libraryListeningSeconds *prometheus.GaugeVec
-    librarySessionsTotal    *prometheus.GaugeVec
-    bookListeningSeconds    *prometheus.GaugeVec
-    deviceListeningSeconds  *prometheus.GaugeVec
-    weekdayListeningSeconds *prometheus.GaugeVec
-    sessionsTotal           prometheus.Gauge
+	userListeningSeconds    *prometheus.GaugeVec
+	userSessionsTotal       *prometheus.GaugeVec
+	libraryListeningSeconds *prometheus.GaugeVec
+	librarySessionsTotal    *prometheus.GaugeVec
+	bookListeningSeconds    *prometheus.GaugeVec
+	deviceListeningSeconds  *prometheus.GaugeVec
+	weekdayListeningSeconds *prometheus.GaugeVec
+	sessionsTotal           prometheus.Gauge
 }
 
 func NewExporter(c *api.Client) *Exporter {
-    e := &Exporter{
-        client: c,
-        up: prometheus.NewGauge(prometheus.GaugeOpts{
-            Name: "audiobookshelf_up",
-            Help: "1 if exporter successfully scraped Audiobookshelf",
-        }),
-        users: prometheus.NewGauge(prometheus.GaugeOpts{
-            Name: "audiobookshelf_users_total",
-            Help: "Number of users in Audiobookshelf",
-        }),
-        libItems: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_library_items_total",
-            Help: "Total items per library (if provided by API, otherwise 0)",
-        }, []string{"library_id", "library_name"}),
-        lastSuccess: prometheus.NewGauge(prometheus.GaugeOpts{
-            Name: "audiobookshelf_last_scrape_success",
-            Help: "1 if last scrape was successful",
-        }),
-        lastTime: prometheus.NewGauge(prometheus.GaugeOpts{
-            Name: "audiobookshelf_last_scrape_timestamp_seconds",
-            Help: "Unix timestamp of last scrape",
-        }),
-        duration: prometheus.NewSummary(prometheus.SummaryOpts{
-            Name: "audiobookshelf_scrape_duration_seconds",
-            Help: "Duration of Audiobookshelf exporter scrape in seconds",
-        }),
+	e := &Exporter{
+		client: c,
+		up: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "audiobookshelf_up",
+			Help: "1 if Audiobookshelf was reachable during the last scrape",
+		}),
+		users: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "audiobookshelf_users_total",
+			Help: "Number of users in Audiobookshelf",
+		}),
+		libItems: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_library_items_total",
+			Help: "Total items per library (if provided by API, otherwise 0)",
+		}, []string{"library_id", "library_name"}),
+		lastSuccess: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "audiobookshelf_last_scrape_success",
+			Help: "1 if last scrape was successful",
+		}),
+		lastTime: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "audiobookshelf_last_scrape_timestamp_seconds",
+			Help: "Unix timestamp of last scrape",
+		}),
+		duration: prometheus.NewSummary(prometheus.SummaryOpts{
+			Name: "audiobookshelf_scrape_duration_seconds",
+			Help: "Duration of Audiobookshelf exporter scrape in seconds",
+		}),
 
+		userListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_user_listening_seconds_total",
+			Help: "Total listening time per user across all sessions",
+		}, []string{"user"}),
 
-        userListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_user_listening_seconds_total",
-            Help: "Total listening time per user across all sessions",
-        }, []string{"user"}),
+		userSessionsTotal: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_user_sessions_total",
+			Help: "Total number of sessions per user",
+		}, []string{"user"}),
 
-        userSessionsTotal: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_user_sessions_total",
-            Help: "Total number of sessions per user",
-        }, []string{"user"}),
+		libraryListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_library_listening_seconds_total",
+			Help: "Total listening time per library",
+		}, []string{"library_id", "library_name"}),
 
-        libraryListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_library_listening_seconds_total",
-            Help: "Total listening time per library",
-        }, []string{"library_id", "library_name"}),
+		librarySessionsTotal: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_library_sessions_total",
+			Help: "Total number of sessions per library",
+		}, []string{"library_id", "library_name"}),
 
-        librarySessionsTotal: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_library_sessions_total",
-            Help: "Total number of sessions per library",
-        }, []string{"library_id", "library_name"}),
+		bookListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_book_listening_seconds_total",
+			Help: "Total listening time per media item title",
+		}, []string{"media_type", "title"}),
 
-        bookListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_book_listening_seconds_total",
-            Help: "Total listening time per book title",
-        }, []string{"title"}),
+		deviceListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_device_listening_seconds_total",
+			Help: "Total listening time per client / device model",
+		}, []string{"client", "model"}),
 
-        deviceListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_device_listening_seconds_total",
-            Help: "Total listening time per client / device model",
-        }, []string{"client", "model"}),
+		weekdayListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_weekday_listening_seconds_total",
+			Help: "Total listening time grouped by day of week",
+		}, []string{"day"}),
 
-        weekdayListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
-            Name: "audiobookshelf_weekday_listening_seconds_total",
-            Help: "Total listening time grouped by day of week",
-        }, []string{"day"}),
+		sessionsTotal: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "audiobookshelf_sessions_total",
+			Help: "Total number of sessions returned by /api/sessions",
+		}),
+	}
 
-        sessionsTotal: prometheus.NewGauge(prometheus.GaugeOpts{
-            Name: "audiobookshelf_sessions_total",
-            Help: "Total number of sessions returned by /api/sessions",
-        }),
-    }
+	prometheus.MustRegister(
+		e.up,
+		e.users,
+		e.libItems,
+		e.lastSuccess,
+		e.lastTime,
+		e.duration,
+		e.userListeningSeconds,
+		e.userSessionsTotal,
+		e.libraryListeningSeconds,
+		e.librarySessionsTotal,
+		e.bookListeningSeconds,
+		e.deviceListeningSeconds,
+		e.weekdayListeningSeconds,
+		e.sessionsTotal,
+	)
 
-    prometheus.MustRegister(
-        e.up,
-        e.users,
-        e.libItems,
-        e.lastSuccess,
-        e.lastTime,
-        e.duration,
-        e.userListeningSeconds,
-        e.userSessionsTotal,
-        e.libraryListeningSeconds,
-        e.librarySessionsTotal,
-        e.bookListeningSeconds,
-        e.deviceListeningSeconds,
-        e.weekdayListeningSeconds,
-        e.sessionsTotal,
-    )
-
-    return e
+	return e
 }
 
 func (e *Exporter) Scrape() {
-    start := time.Now()
-    success := true
+	start := time.Now()
+	success := true
+	absReachable := false
 
-    e.up.Set(0)
-    e.lastSuccess.Set(0)
+	users, err := e.client.Users()
+	if err != nil {
+		log.Println("users:", err)
+		success = false
+	} else {
+		absReachable = true
+		e.users.Set(float64(len(users)))
+	}
 
+	libs, err := e.client.Libraries()
+	libNames := map[string]string{}
 
-    users, err := e.client.Users()
-    if err != nil {
-        log.Println("users:", err)
-        success = false
-    } else {
-        e.users.Set(float64(len(users)))
-    }
+	if err != nil {
+		log.Println("libs:", err)
+		success = false
+	} else {
+		absReachable = true
+		e.libItems.Reset()
 
+		for _, l := range libs {
+			libNames[l.ID] = l.Name
 
-    libs, err := e.client.Libraries()
-    libNames := map[string]string{}
+			d, err := e.client.LibraryDetail(l.ID)
+			if err != nil {
+				log.Println("detail:", err)
+				success = false
+				continue
+			}
+			e.libItems.WithLabelValues(l.ID, l.Name).Set(float64(d.TotalItems))
+		}
+	}
 
-    if err != nil {
-        log.Println("libs:", err)
-        success = false
-    } else {
-        e.libItems.Reset()
+	sessions, err := e.client.Sessions()
+	if err != nil {
+		log.Println("sessions:", err)
+		success = false
+	} else {
+		absReachable = true
+		userListening := make(map[string]float64)
+		userSessions := make(map[string]float64)
+		libraryListening := make(map[string]float64)
+		librarySessions := make(map[string]float64)
+		bookListening := make(map[[2]string]float64)
+		deviceListening := make(map[[2]string]float64)
+		weekdayListening := make(map[string]float64)
 
-        for _, l := range libs {
-            libNames[l.ID] = l.Name
+		for _, s := range sessions {
+			listened := s.TimeListening
+			if listened <= 0 {
+				continue
+			}
 
-            d, err := e.client.LibraryDetail(l.ID)
-            if err != nil {
-                log.Println("detail:", err)
-                success = false
-                continue
-            }
-            e.libItems.WithLabelValues(l.ID, l.Name).Set(float64(d.TotalItems))
-        }
-    }
+			username := s.UserID
+			if s.User != nil && s.User.Username != "" {
+				username = s.User.Username
+			}
+			if username == "" {
+				username = "unknown"
+			}
 
+			libID := s.LibraryID
+			if libID == "" {
+				libID = "unknown"
+			}
+			libName := libNames[libID]
+			if libName == "" {
+				libName = libID
+			}
 
-    sessions, err := e.client.Sessions()
-    if err != nil {
-        log.Println("sessions:", err)
-        success = false
-    } else {
-        userListening := make(map[string]float64)
-        userSessions := make(map[string]float64)
-        libraryListening := make(map[string]float64)
-        librarySessions := make(map[string]float64)
-        bookListening := make(map[string]float64)
-        deviceListening := make(map[[2]string]float64)
-        weekdayListening := make(map[string]float64)
+			mediaType := s.MediaType
+			if mediaType == "" {
+				mediaType = "unknown"
+			}
 
-        for _, s := range sessions {
-            listened := s.TimeListening
-            if listened <= 0 {
-                continue
-            }
+			title := ""
+			if s.MediaMetadata != nil && s.MediaMetadata.Title != "" {
+				title = s.MediaMetadata.Title
+			} else {
+				title = "unknown"
+			}
 
-            username := s.UserID
-            if s.User != nil && s.User.Username != "" {
-                username = s.User.Username
-            }
-            if username == "" {
-                username = "unknown"
-            }
+			var client, model string
+			if s.DeviceInfo != nil {
+				if s.DeviceInfo.ClientName != "" {
+					client = s.DeviceInfo.ClientName
+				} else {
+					client = "unknown"
+				}
+				if s.DeviceInfo.Model != "" {
+					model = s.DeviceInfo.Model
+				} else {
+					model = "unknown"
+				}
+			} else {
+				client = "unknown"
+				model = "unknown"
+			}
 
-            libID := s.LibraryID
-            if libID == "" {
-                libID = "unknown"
-            }
-            libName := libNames[libID]
-            if libName == "" {
-                libName = libID
-            }
+			day := s.DayOfWeek
+			if day == "" {
+				day = "unknown"
+			}
 
-            title := ""
-            if s.MediaMetadata != nil && s.MediaMetadata.Title != "" {
-                title = s.MediaMetadata.Title
-            } else {
-                title = "unknown"
-            }
+			userListening[username] += listened
+			userSessions[username]++
 
-            var client, model string
-            if s.DeviceInfo != nil {
-                if s.DeviceInfo.ClientName != "" {
-                    client = s.DeviceInfo.ClientName
-                } else {
-                    client = "unknown"
-                }
-                if s.DeviceInfo.Model != "" {
-                    model = s.DeviceInfo.Model
-                } else {
-                    model = "unknown"
-                }
-            } else {
-                client = "unknown"
-                model = "unknown"
-            }
+			libraryKey := libID + "||" + libName
+			libraryListening[libraryKey] += listened
+			librarySessions[libraryKey]++
 
-            day := s.DayOfWeek
-            if day == "" {
-                day = "unknown"
-            }
+			bookKey := [2]string{mediaType, title}
+			bookListening[bookKey] += listened
 
-            userListening[username] += listened
-            userSessions[username]++
+			dmKey := [2]string{client, model}
+			deviceListening[dmKey] += listened
 
-            libraryKey := libID + "||" + libName
-            libraryListening[libraryKey] += listened
-            librarySessions[libraryKey]++
+			weekdayListening[day] += listened
+		}
 
-            bookListening[title] += listened
+		e.userListeningSeconds.Reset()
+		e.userSessionsTotal.Reset()
+		e.libraryListeningSeconds.Reset()
+		e.librarySessionsTotal.Reset()
+		e.bookListeningSeconds.Reset()
+		e.deviceListeningSeconds.Reset()
+		e.weekdayListeningSeconds.Reset()
 
-            dmKey := [2]string{client, model}
-            deviceListening[dmKey] += listened
+		for user, secs := range userListening {
+			e.userListeningSeconds.WithLabelValues(user).Set(secs)
+		}
+		for user, count := range userSessions {
+			e.userSessionsTotal.WithLabelValues(user).Set(count)
+		}
 
-            weekdayListening[day] += listened
-        }
+		for key, secs := range libraryListening {
+			parts := splitOnce(key, "||")
+			libID := parts[0]
+			libName := parts[1]
+			e.libraryListeningSeconds.WithLabelValues(libID, libName).Set(secs)
+		}
+		for key, count := range librarySessions {
+			parts := splitOnce(key, "||")
+			libID := parts[0]
+			libName := parts[1]
+			e.librarySessionsTotal.WithLabelValues(libID, libName).Set(count)
+		}
 
-        e.userListeningSeconds.Reset()
-        e.userSessionsTotal.Reset()
-        e.libraryListeningSeconds.Reset()
-        e.librarySessionsTotal.Reset()
-        e.bookListeningSeconds.Reset()
-        e.deviceListeningSeconds.Reset()
-        e.weekdayListeningSeconds.Reset()
+		for bookKey, secs := range bookListening {
+			mediaType := bookKey[0]
+			title := bookKey[1]
+			e.bookListeningSeconds.WithLabelValues(mediaType, title).Set(secs)
+		}
 
+		for dmKey, secs := range deviceListening {
+			client := dmKey[0]
+			model := dmKey[1]
+			e.deviceListeningSeconds.WithLabelValues(client, model).Set(secs)
+		}
 
-        for user, secs := range userListening {
-            e.userListeningSeconds.WithLabelValues(user).Set(secs)
-        }
-        for user, count := range userSessions {
-            e.userSessionsTotal.WithLabelValues(user).Set(count)
-        }
+		for day, secs := range weekdayListening {
+			e.weekdayListeningSeconds.WithLabelValues(day).Set(secs)
+		}
 
-        for key, secs := range libraryListening {
-            parts := splitOnce(key, "||")
-            libID := parts[0]
-            libName := parts[1]
-            e.libraryListeningSeconds.WithLabelValues(libID, libName).Set(secs)
-        }
-        for key, count := range librarySessions {
-            parts := splitOnce(key, "||")
-            libID := parts[0]
-            libName := parts[1]
-            e.librarySessionsTotal.WithLabelValues(libID, libName).Set(count)
-        }
+		e.sessionsTotal.Set(float64(len(sessions)))
+	}
 
-        for title, secs := range bookListening {
-            e.bookListeningSeconds.WithLabelValues(title).Set(secs)
-        }
+	if absReachable {
+		e.up.Set(1)
+	} else {
+		e.up.Set(0)
+	}
 
-        for dmKey, secs := range deviceListening {
-            client := dmKey[0]
-            model := dmKey[1]
-            e.deviceListeningSeconds.WithLabelValues(client, model).Set(secs)
-        }
+	if success {
+		e.lastSuccess.Set(1)
+	} else {
+		e.lastSuccess.Set(0)
+	}
 
-        for day, secs := range weekdayListening {
-            e.weekdayListeningSeconds.WithLabelValues(day).Set(secs)
-        }
-
-        e.sessionsTotal.Set(float64(len(sessions)))
-    }
-
-    if success {
-        e.up.Set(1)
-        e.lastSuccess.Set(1)
-    }
-
-    e.lastTime.Set(float64(time.Now().Unix()))
-    e.duration.Observe(time.Since(start).Seconds())
+	e.lastTime.Set(float64(time.Now().Unix()))
+	e.duration.Observe(time.Since(start).Seconds())
 }
 
 func (e *Exporter) Run(interval time.Duration) {
-    e.Scrape()
-    t := time.NewTicker(interval)
-    for range t.C {
-        e.Scrape()
-    }
+	e.Scrape()
+	t := time.NewTicker(interval)
+	for range t.C {
+		e.Scrape()
+	}
 }
 
 func splitOnce(s, sep string) [2]string {
-    idx := -1
-    for i := 0; i+len(sep) <= len(s); i++ {
-        if s[i:i+len(sep)] == sep {
-            idx = i
-            break
-        }
-    }
-    if idx == -1 {
-        return [2]string{s, ""}
-    }
-    return [2]string{s[:idx], s[idx+len(sep):]}
+	idx := -1
+	for i := 0; i+len(sep) <= len(s); i++ {
+		if s[i:i+len(sep)] == sep {
+			idx = i
+			break
+		}
+	}
+	if idx == -1 {
+		return [2]string{s, ""}
+	}
+	return [2]string{s[:idx], s[idx+len(sep):]}
 }

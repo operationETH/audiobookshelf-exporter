@@ -15,7 +15,8 @@ This exporter collects listening statistics, user activity, library metrics, and
 ![Grafana Dashboard Screenshot 3](examples/grafana/screenshots/audiobookshelf-exporter_3.png)
 
 Example dashboard JSON:  
-`examples/grafana/audiobookshelf-dashboard.json`
+- `examples/grafana/audiobookshelf-dashboard.json` — Grafana classic schema  
+- `examples/grafana/audiobookshelf-dashboard-v2.json` — Grafana v2 schema (Grafana 11+)
 
 Import in Grafana via:  
 **Dashboards → New → Import**
@@ -24,7 +25,7 @@ Import in Grafana via:
 
 ## Features
 
-- Total listening time per book, user, and device
+- Total listening time per book, podcast, user, and device
 - Duration grouped by day of week
 - Active users and session counts
 - Library-wide metrics (listening time, session totals)
@@ -76,7 +77,7 @@ Then edit `.env` with your Audiobookshelf URL and API key.
 docker run -d \
   --name audiobookshelf-exporter \
   -p 9860:9860 \
-  -e ABS_URL="http://192.168.0.106:13378" \
+  -e ABS_URL="http://YOUR_ABS_HOST:13378" \
   -e ABS_API_KEY="YOUR_API_KEY" \
   ghcr.io/operationeth/audiobookshelf-exporter:latest
 ```
