@@ -3,8 +3,8 @@
   "kind": "Dashboard",
   "metadata": {
     "name": "audiobookshelf-exporter-v2",
-    "generation": 3,
-    "creationTimestamp": "2026-06-02T03:03:02Z",
+    "generation": 17,
+    "creationTimestamp": "2026-06-02T06:02:46Z",
     "labels": {},
     "annotations": {}
   },
@@ -17,10 +17,7 @@
             "kind": "DataQuery",
             "group": "grafana",
             "version": "v0",
-            "spec": {},
-            "labels": {
-              "grafana.app/export-label": "grafana-1"
-            }
+            "spec": {}
           },
           "enable": true,
           "hide": true,
@@ -72,7 +69,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "stat",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "colorMode": "value",
@@ -216,7 +213,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "barchart",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "barRadius": 0.05,
@@ -326,7 +323,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "stat",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "colorMode": "background",
@@ -431,7 +428,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "piechart",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "displayLabels": [
@@ -541,7 +538,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "table",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "cellHeight": "sm",
@@ -725,7 +722,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "table",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "cellHeight": "sm",
@@ -872,7 +869,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "table",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "cellHeight": "sm",
@@ -973,7 +970,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "stat",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "colorMode": "value",
@@ -1009,6 +1006,837 @@
                   }
                 },
                 "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-17": {
+        "kind": "Panel",
+        "spec": {
+          "id": 17,
+          "title": "Audiobookshelf Now Playing",
+          "description": "Currently active Audiobookshelf listening sessions",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${DS_PROMETHEUS}"
+                      },
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "audiobookshelf_open_session_info\nand on(session_id,user,title,client,model)\n((time() - audiobookshelf_open_session_updated_timestamp_seconds) < 300)",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "{{user}} - {{title}}",
+                        "range": false
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Time": true,
+                        "Value": true,
+                        "__name__": true,
+                        "device_name": true,
+                        "instance": true,
+                        "job": true,
+                        "library_id": true,
+                        "media_type": true,
+                        "session_id": true,
+                        "user_id": true
+                      },
+                      "includeByName": {},
+                      "indexByName": {
+                        "Time": 8,
+                        "Value": 15,
+                        "__name__": 9,
+                        "author": 3,
+                        "client": 5,
+                        "device_name": 7,
+                        "instance": 10,
+                        "job": 11,
+                        "library_id": 12,
+                        "library_name": 4,
+                        "media_type": 1,
+                        "model": 6,
+                        "session_id": 13,
+                        "title": 2,
+                        "user": 0,
+                        "user_id": 14
+                      },
+                      "orderByMode": "manual",
+                      "renameByName": {
+                        "author": "Author",
+                        "client": "Client",
+                        "device_name": "Device Name",
+                        "library_name": "Library",
+                        "media_type": "Type",
+                        "model": "Device",
+                        "title": "Title",
+                        "user": "User"
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.0.2",
+            "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "Audiobooks": {
+                          "text": "Audiobooks",
+                          "color": "dark-blue",
+                          "index": 0
+                        },
+                        "Cookbooks": {
+                          "text": "Cookbooks",
+                          "color": "dark-yellow",
+                          "index": 3
+                        },
+                        "Workouts": {
+                          "text": "Workouts",
+                          "color": "dark-purple",
+                          "index": 1
+                        },
+                        "YouTube Podcasts": {
+                          "text": "YouTube Podcasts",
+                          "color": "dark-orange",
+                          "index": 2
+                        },
+                        "podcasts test": {
+                          "text": "podcasts test",
+                          "color": "#393837",
+                          "index": 4
+                        }
+                      }
+                    }
+                  ],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "User"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 80
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Title"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 339
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Author"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 260
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Library"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 110
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Client"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 110
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Device"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 180
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Device Name"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 152
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Time"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 186
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Type"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 60
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Library"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-background"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-18": {
+        "kind": "Panel",
+        "spec": {
+          "id": 18,
+          "title": "Audiobookshelf Recently Listened",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "spec": {
+                        "editorMode": "builder",
+                        "exemplar": false,
+                        "expr": "audiobookshelf_recent_session_info",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "__auto",
+                        "range": false
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Time": true,
+                        "Value": true,
+                        "__name__": true,
+                        "client": false,
+                        "day": true,
+                        "device_name": true,
+                        "instance": true,
+                        "job": true,
+                        "library_id": true,
+                        "library_name": false,
+                        "media_type": true,
+                        "model": true,
+                        "session_id": true,
+                        "user_id": true
+                      },
+                      "includeByName": {},
+                      "indexByName": {
+                        "Time": 8,
+                        "Value": 17,
+                        "__name__": 9,
+                        "author": 5,
+                        "client": 6,
+                        "date": 0,
+                        "day": 10,
+                        "device_name": 11,
+                        "instance": 12,
+                        "job": 13,
+                        "library_id": 14,
+                        "library_name": 2,
+                        "media_type": 3,
+                        "model": 7,
+                        "session_id": 15,
+                        "title": 4,
+                        "user": 1,
+                        "user_id": 16
+                      },
+                      "renameByName": {
+                        "author": "Author",
+                        "client": "Client",
+                        "date": "Date",
+                        "library_name": "Library",
+                        "media_type": "Type",
+                        "model": "Device",
+                        "title": "Title",
+                        "user": "User"
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "sortBy",
+                  "spec": {
+                    "options": {
+                      "fields": {},
+                      "sort": [
+                        {
+                          "desc": true,
+                          "field": "Date"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.0.2",
+            "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "Audiobooks": {
+                          "text": "Audiobooks",
+                          "color": "dark-blue",
+                          "index": 0
+                        },
+                        "Cookbooks": {
+                          "text": "Cookbooks",
+                          "color": "dark-yellow",
+                          "index": 3
+                        },
+                        "Workouts": {
+                          "text": "Workouts",
+                          "color": "dark-purple",
+                          "index": 1
+                        },
+                        "YouTube Podcasts": {
+                          "text": "YouTube Podcasts",
+                          "color": "dark-orange",
+                          "index": 2
+                        },
+                        "podcasts test": {
+                          "text": "podcasts test",
+                          "color": "#393837",
+                          "index": 4
+                        }
+                      }
+                    }
+                  ],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Date"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 96
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "User"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 86
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Type"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 91
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Title"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 208
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Author"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 240
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Library"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 143
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Client"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 164
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Library"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-background"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-19": {
+        "kind": "Panel",
+        "spec": {
+          "id": 19,
+          "title": "Recently Added",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "spec": {
+                        "editorMode": "code",
+                        "exemplar": false,
+                        "expr": "audiobookshelf_recent_added_info\n* on(item_id) group_left()\naudiobookshelf_recent_added_timestamp_seconds",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "__auto",
+                        "range": false
+                      },
+                      "labels": {
+                        "grafana.app/export-label": "prometheus-1"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Time": true,
+                        "Value": false,
+                        "__name__": true,
+                        "instance": true,
+                        "item_id": true,
+                        "job": true,
+                        "library_id": true,
+                        "media_type": false
+                      },
+                      "includeByName": {},
+                      "indexByName": {
+                        "Time": 6,
+                        "Value": 12,
+                        "__name__": 7,
+                        "author": 3,
+                        "instance": 8,
+                        "item_id": 9,
+                        "job": 10,
+                        "library_id": 11,
+                        "library_name": 0,
+                        "media_type": 1,
+                        "series": 4,
+                        "title": 2,
+                        "year": 5
+                      },
+                      "renameByName": {
+                        "Value": "Added",
+                        "author": "Author",
+                        "library_name": "Library",
+                        "media_type": "Type",
+                        "series": "Series",
+                        "title": "Title",
+                        "year": "Year"
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "sortBy",
+                  "spec": {
+                    "options": {
+                      "fields": {},
+                      "sort": [
+                        {
+                          "desc": true,
+                          "field": "Added"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Added": true,
+                        "Series": true,
+                        "Type": true,
+                        "Year": true
+                      },
+                      "includeByName": {},
+                      "indexByName": {},
+                      "renameByName": {}
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.0.2",
+            "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true,
+                "sortBy": []
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "mappings": [
+                    {
+                      "type": "value",
+                      "options": {
+                        "Audiobooks": {
+                          "text": "Audiobooks",
+                          "color": "semi-dark-blue",
+                          "index": 0
+                        },
+                        "Cookbooks": {
+                          "text": "Cookbooks",
+                          "color": "dark-yellow",
+                          "index": 3
+                        },
+                        "Workouts": {
+                          "text": "Workouts",
+                          "color": "dark-purple",
+                          "index": 1
+                        },
+                        "YouTube Podcasts": {
+                          "text": "YouTube Podcasts",
+                          "color": "dark-orange",
+                          "index": 2
+                        },
+                        "podcasts test": {
+                          "text": "podcasts test",
+                          "color": "#393837",
+                          "index": 4
+                        }
+                      }
+                    }
+                  ],
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Library"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 146
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Type"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 114
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Title"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 551
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Author"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 265
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Library"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "applyToRow": false,
+                          "type": "color-background"
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
@@ -1052,7 +1880,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "stat",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "colorMode": "value",
@@ -1085,6 +1913,153 @@
                   },
                   "color": {
                     "mode": "thresholds"
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-20": {
+        "kind": "Panel",
+        "spec": {
+          "id": 20,
+          "title": "Listening Time by Hour of Day",
+          "description": "Total Audiobookshelf listening time grouped by session start hour.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${DS_PROMETHEUS}"
+                      },
+                      "spec": {
+                        "expr": "audiobookshelf_hour_listening_seconds_total",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "{{hour}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Time": true,
+                        "__name__": true,
+                        "instance": true,
+                        "job": true
+                      },
+                      "indexByName": {},
+                      "renameByName": {
+                        "Value": "Listening Time",
+                        "hour": "Hour"
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "sortBy",
+                  "spec": {
+                    "options": {
+                      "fields": {},
+                      "sort": [
+                        {
+                          "desc": false,
+                          "field": "Hour"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "barchart",
+            "version": "13.0.2",
+            "spec": {
+              "options": {
+                "barRadius": 0.05,
+                "barWidth": 0.7,
+                "fullHighlight": false,
+                "groupWidth": 0.7,
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "hidden",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "orientation": "vertical",
+                "showValue": "auto",
+                "stacking": "none",
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                },
+                "xField": "Hour",
+                "xTickLabelRotation": 0,
+                "xTickLabelSpacing": 0
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "dtdurations",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "continuous-YlBl"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "fillOpacity": 80,
+                    "gradientMode": "scheme",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "lineWidth": 1,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
                   }
                 },
                 "overrides": []
@@ -1131,7 +2106,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "stat",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "colorMode": "value",
@@ -1210,7 +2185,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "stat",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "colorMode": "value",
@@ -1308,7 +2283,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "timeseries",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "annotations": {
@@ -1428,7 +2403,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "timeseries",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "annotations": {
@@ -1566,7 +2541,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "barchart",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "barRadius": 0,
@@ -1695,7 +2670,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "barchart",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "barRadius": 0,
@@ -1827,7 +2802,7 @@
           "vizConfig": {
             "kind": "VizConfig",
             "group": "table",
-            "version": "13.0.1+security-01",
+            "version": "13.0.2",
             "spec": {
               "options": {
                 "cellHeight": "sm",
@@ -1981,6 +2956,45 @@
                           "name": "panel-11"
                         }
                       }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 5,
+                        "width": 24,
+                        "height": 6,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-17"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 11,
+                        "width": 10,
+                        "height": 13,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-18"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 10,
+                        "y": 11,
+                        "width": 14,
+                        "height": 13,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-19"
+                        }
+                      }
                     }
                   ]
                 }
@@ -2081,7 +3095,7 @@
                       "spec": {
                         "x": 0,
                         "y": 0,
-                        "width": 24,
+                        "width": 23,
                         "height": 12,
                         "element": {
                           "kind": "ElementReference",
@@ -2109,7 +3123,7 @@
                         "x": 0,
                         "y": 0,
                         "width": 24,
-                        "height": 12,
+                        "height": 5,
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-15"
@@ -2193,6 +3207,19 @@
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-10"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 9,
+                        "width": 24,
+                        "height": 9,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-20"
                         }
                       }
                     }

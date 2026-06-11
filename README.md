@@ -51,11 +51,12 @@ Then edit `.env` with your Audiobookshelf URL and API key.
 | Variable | Description | Default |
 |-----------|-------------|---------|
 | `ABS_URL` | Your Audiobookshelf base URL | `(required)` |
-| `ABS_API_KEY` | Your API key (found in Audiobookshelf user settings) | `(required)` |
-| `EXPORTER_PORT` | Port to expose metrics on | `9860` |
-| `SCRAPE_INTERVAL_SECONDS` | How often it scrapes | `30` |
-| `LOG_FORMAT` | Optional. `console` for dev logs | `JSON` |
-
+| `ABS_API_KEY` | Your API key from Audiobookshelf | `(required)` |
+| `EXPORTER_PORT` | Port the exporter listens on inside the container | `9860` |
+| `SCRAPE_INTERVAL_SECONDS` | How often the exporter refreshes data from Audiobookshelf | `30` |
+| `LOG_FORMAT` | Log output format. Use `console` for easier local/dev logs | `JSON` |
+| `ABS_RECENT_SESSIONS_LIMIT` | Number of recent listening sessions to export | `10` |
+| `ABS_RECENT_ITEMS_LIMIT` | Number of recently added items to export per library | `10` |
 ---
 
 ## Example Metrics
@@ -66,6 +67,9 @@ Then edit `.env` with your Audiobookshelf URL and API key.
 - `audiobookshelf_user_listening_seconds_total`
 - `audiobookshelf_book_listening_seconds_total`
 - `audiobookshelf_weekday_listening_seconds_total`
+- `audiobookshelf_open_sessions_total`
+- `audiobookshelf_recent_session_info`
+- `audiobookshelf_recent_added_info`
 
 ---
 

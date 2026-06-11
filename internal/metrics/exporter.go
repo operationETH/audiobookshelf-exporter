@@ -1,7 +1,11 @@
 package metrics
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/operationeth/audiobookshelf-exporter/internal/api"
@@ -10,6 +14,9 @@ import (
 
 type Exporter struct {
 	client *api.Client
+
+	recentSessionsLimit int
+	recentItemsLimit    int
 
 	up          prometheus.Gauge
 	users       prometheus.Gauge
@@ -25,12 +32,35 @@ type Exporter struct {
 	bookListeningSeconds    *prometheus.GaugeVec
 	deviceListeningSeconds  *prometheus.GaugeVec
 	weekdayListeningSeconds *prometheus.GaugeVec
+	hourListeningSeconds    *prometheus.GaugeVec
 	sessionsTotal           prometheus.Gauge
+
+	openSessionsTotal                  prometheus.Gauge
+	openSessionInfo                    *prometheus.GaugeVec
+	openSessionCurrentTimeSeconds      *prometheus.GaugeVec
+	openSessionDurationSeconds         *prometheus.GaugeVec
+	openSessionProgressPercent         *prometheus.GaugeVec
+	openSessionTimeListeningSeconds    *prometheus.GaugeVec
+	openSessionStartedTimestampSeconds *prometheus.GaugeVec
+	openSessionUpdatedTimestampSeconds *prometheus.GaugeVec
+
+	recentSessionInfo                    *prometheus.GaugeVec
+	recentSessionListeningSeconds        *prometheus.GaugeVec
+	recentSessionProgressPercent         *prometheus.GaugeVec
+	recentSessionStartedTimestampSeconds *prometheus.GaugeVec
+	recentSessionUpdatedTimestampSeconds *prometheus.GaugeVec
+
+	recentAddedInfo             *prometheus.GaugeVec
+	recentAddedTimestampSeconds *prometheus.GaugeVec
+	recentAddedDurationSeconds  *prometheus.GaugeVec
+	recentAddedSizeBytes        *prometheus.GaugeVec
 }
 
 func NewExporter(c *api.Client) *Exporter {
 	e := &Exporter{
-		client: c,
+		client:              c,
+		recentSessionsLimit: envInt("ABS_RECENT_SESSIONS_LIMIT", 10),
+		recentItemsLimit:    envInt("ABS_RECENT_ITEMS_LIMIT", 10),
 		up: prometheus.NewGauge(prometheus.GaugeOpts{
 			Name: "audiobookshelf_up",
 			Help: "1 if Audiobookshelf was reachable during the last scrape",
@@ -91,10 +121,86 @@ func NewExporter(c *api.Client) *Exporter {
 			Help: "Total listening time grouped by day of week",
 		}, []string{"day"}),
 
+		hourListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_hour_listening_seconds_total",
+			Help: "Total listening time grouped by session start hour of day",
+		}, []string{"hour"}),
+
 		sessionsTotal: prometheus.NewGauge(prometheus.GaugeOpts{
 			Name: "audiobookshelf_sessions_total",
 			Help: "Total number of sessions returned by /api/sessions",
 		}),
+
+		openSessionsTotal: prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_sessions_total",
+			Help: "Number of active/open Audiobookshelf playback sessions",
+		}),
+		openSessionInfo: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_session_info",
+			Help: "Information about active/open Audiobookshelf playback sessions. Value is always 1.",
+		}, []string{"session_id", "user", "user_id", "library_id", "library_name", "media_type", "title", "author", "client", "model", "device_name"}),
+		openSessionCurrentTimeSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_session_current_time_seconds",
+			Help: "Current playback position for active/open sessions in seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		openSessionDurationSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_session_duration_seconds",
+			Help: "Total media duration for active/open sessions in seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		openSessionProgressPercent: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_session_progress_percent",
+			Help: "Current playback progress for active/open sessions as a percent",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		openSessionTimeListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_session_time_listening_seconds",
+			Help: "Time listened during the active/open session in seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		openSessionStartedTimestampSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_session_started_timestamp_seconds",
+			Help: "Start timestamp for active/open sessions as Unix seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		openSessionUpdatedTimestampSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_open_session_updated_timestamp_seconds",
+			Help: "Last update timestamp for active/open sessions as Unix seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+
+		recentSessionInfo: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_session_info",
+			Help: "Information about recently listened Audiobookshelf sessions. Value is always 1.",
+		}, []string{"session_id", "user", "user_id", "library_id", "library_name", "media_type", "title", "author", "date", "day", "client", "model", "device_name"}),
+		recentSessionListeningSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_session_listening_seconds",
+			Help: "Listening time for recently listened sessions in seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		recentSessionProgressPercent: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_session_progress_percent",
+			Help: "Playback progress for recently listened sessions as a percent",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		recentSessionStartedTimestampSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_session_started_timestamp_seconds",
+			Help: "Start timestamp for recently listened sessions as Unix seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+		recentSessionUpdatedTimestampSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_session_updated_timestamp_seconds",
+			Help: "Last update timestamp for recently listened sessions as Unix seconds",
+		}, []string{"session_id", "user", "title", "client", "model"}),
+
+		recentAddedInfo: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_added_info",
+			Help: "Information about recently added Audiobookshelf library items. Value is always 1.",
+		}, []string{"item_id", "library_id", "library_name", "media_type", "title", "author", "series", "year"}),
+		recentAddedTimestampSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_added_timestamp_seconds",
+			Help: "Added timestamp for recently added library items as Unix seconds",
+		}, []string{"item_id", "library_name", "title", "author", "media_type"}),
+		recentAddedDurationSeconds: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_added_duration_seconds",
+			Help: "Duration for recently added library items in seconds",
+		}, []string{"item_id", "library_name", "title", "author", "media_type"}),
+		recentAddedSizeBytes: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "audiobookshelf_recent_added_size_bytes",
+			Help: "Size for recently added library items in bytes",
+		}, []string{"item_id", "library_name", "title", "author", "media_type"}),
 	}
 
 	prometheus.MustRegister(
@@ -111,7 +217,25 @@ func NewExporter(c *api.Client) *Exporter {
 		e.bookListeningSeconds,
 		e.deviceListeningSeconds,
 		e.weekdayListeningSeconds,
+		e.hourListeningSeconds,
 		e.sessionsTotal,
+		e.openSessionsTotal,
+		e.openSessionInfo,
+		e.openSessionCurrentTimeSeconds,
+		e.openSessionDurationSeconds,
+		e.openSessionProgressPercent,
+		e.openSessionTimeListeningSeconds,
+		e.openSessionStartedTimestampSeconds,
+		e.openSessionUpdatedTimestampSeconds,
+		e.recentSessionInfo,
+		e.recentSessionListeningSeconds,
+		e.recentSessionProgressPercent,
+		e.recentSessionStartedTimestampSeconds,
+		e.recentSessionUpdatedTimestampSeconds,
+		e.recentAddedInfo,
+		e.recentAddedTimestampSeconds,
+		e.recentAddedDurationSeconds,
+		e.recentAddedSizeBytes,
 	)
 
 	return e
@@ -123,12 +247,18 @@ func (e *Exporter) Scrape() {
 	absReachable := false
 
 	users, err := e.client.Users()
+	userNames := map[string]string{}
 	if err != nil {
 		log.Println("users:", err)
 		success = false
 	} else {
 		absReachable = true
 		e.users.Set(float64(len(users)))
+		for _, u := range users {
+			if u.ID != "" && u.Username != "" {
+				userNames[u.ID] = u.Username
+			}
+		}
 	}
 
 	libs, err := e.client.Libraries()
@@ -167,6 +297,7 @@ func (e *Exporter) Scrape() {
 		bookListening := make(map[[2]string]float64)
 		deviceListening := make(map[[2]string]float64)
 		weekdayListening := make(map[string]float64)
+		hourListening := make(map[string]float64)
 
 		for _, s := range sessions {
 			listened := s.TimeListening
@@ -239,6 +370,7 @@ func (e *Exporter) Scrape() {
 			deviceListening[dmKey] += listened
 
 			weekdayListening[day] += listened
+			hourListening[sessionHour(s)] += listened
 		}
 
 		e.userListeningSeconds.Reset()
@@ -248,6 +380,7 @@ func (e *Exporter) Scrape() {
 		e.bookListeningSeconds.Reset()
 		e.deviceListeningSeconds.Reset()
 		e.weekdayListeningSeconds.Reset()
+		e.hourListeningSeconds.Reset()
 
 		for user, secs := range userListening {
 			e.userListeningSeconds.WithLabelValues(user).Set(secs)
@@ -285,7 +418,123 @@ func (e *Exporter) Scrape() {
 			e.weekdayListeningSeconds.WithLabelValues(day).Set(secs)
 		}
 
+		for hour := 0; hour < 24; hour++ {
+			hourLabel := fmt.Sprintf("%02d:00", hour)
+			e.hourListeningSeconds.WithLabelValues(hourLabel).Set(hourListening[hourLabel])
+		}
+
 		e.sessionsTotal.Set(float64(len(sessions)))
+	}
+
+	openSessions, err := e.client.OpenSessions()
+	if err != nil {
+		log.Println("open sessions:", err)
+		success = false
+	} else {
+		absReachable = true
+		e.openSessionsTotal.Set(float64(len(openSessions)))
+		e.openSessionInfo.Reset()
+		e.openSessionCurrentTimeSeconds.Reset()
+		e.openSessionDurationSeconds.Reset()
+		e.openSessionProgressPercent.Reset()
+		e.openSessionTimeListeningSeconds.Reset()
+		e.openSessionStartedTimestampSeconds.Reset()
+		e.openSessionUpdatedTimestampSeconds.Reset()
+
+		for _, s := range openSessions {
+			labels := sessionLabels(s, userNames, libNames)
+			e.openSessionInfo.WithLabelValues(
+				labels.sessionID,
+				labels.user,
+				labels.userID,
+				labels.libraryID,
+				labels.libraryName,
+				labels.mediaType,
+				labels.title,
+				labels.author,
+				labels.client,
+				labels.model,
+				labels.deviceName,
+			).Set(1)
+
+			e.openSessionCurrentTimeSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(s.CurrentTime)
+			e.openSessionDurationSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(s.Duration)
+			e.openSessionProgressPercent.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(progressPercent(s.CurrentTime, s.Duration))
+			e.openSessionTimeListeningSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(s.TimeListening)
+			e.openSessionStartedTimestampSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(msToSeconds(s.StartedAt))
+			e.openSessionUpdatedTimestampSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(msToSeconds(s.UpdatedAt))
+		}
+	}
+
+	recentSessions, err := e.client.RecentSessions(e.recentSessionsLimit)
+	if err != nil {
+		log.Println("recent sessions:", err)
+		success = false
+	} else {
+		absReachable = true
+		e.recentSessionInfo.Reset()
+		e.recentSessionListeningSeconds.Reset()
+		e.recentSessionProgressPercent.Reset()
+		e.recentSessionStartedTimestampSeconds.Reset()
+		e.recentSessionUpdatedTimestampSeconds.Reset()
+
+		for _, s := range recentSessions {
+			labels := sessionLabels(s, userNames, libNames)
+			day := valueOrUnknown(s.DayOfWeek)
+			date := valueOrUnknown(s.Date)
+
+			e.recentSessionInfo.WithLabelValues(
+				labels.sessionID,
+				labels.user,
+				labels.userID,
+				labels.libraryID,
+				labels.libraryName,
+				labels.mediaType,
+				labels.title,
+				labels.author,
+				date,
+				day,
+				labels.client,
+				labels.model,
+				labels.deviceName,
+			).Set(1)
+
+			e.recentSessionListeningSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(s.TimeListening)
+			e.recentSessionProgressPercent.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(progressPercent(s.CurrentTime, s.Duration))
+			e.recentSessionStartedTimestampSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(msToSeconds(s.StartedAt))
+			e.recentSessionUpdatedTimestampSeconds.WithLabelValues(labels.sessionID, labels.user, labels.title, labels.client, labels.model).Set(msToSeconds(s.UpdatedAt))
+		}
+	}
+
+	e.recentAddedInfo.Reset()
+	e.recentAddedTimestampSeconds.Reset()
+	e.recentAddedDurationSeconds.Reset()
+	e.recentAddedSizeBytes.Reset()
+
+	for _, l := range libs {
+		items, err := e.client.RecentLibraryItems(l.ID, e.recentItemsLimit)
+		if err != nil {
+			log.Println("recent items:", err)
+			success = false
+			continue
+		}
+		absReachable = true
+
+		for _, item := range items {
+			itemID := valueOrUnknown(item.ID)
+			libraryID := valueOrUnknown(item.LibraryID)
+			libraryName := valueOrUnknown(libNames[item.LibraryID])
+			mediaType := valueOrUnknown(item.MediaType)
+			title := valueOrUnknown(item.Media.Metadata.Title)
+			author := valueOrUnknown(item.Media.Metadata.AuthorName)
+			series := valueOrUnknown(item.Media.Metadata.SeriesName)
+			year := valueOrUnknown(item.Media.Metadata.PublishedYear)
+
+			e.recentAddedInfo.WithLabelValues(itemID, libraryID, libraryName, mediaType, title, author, series, year).Set(1)
+			e.recentAddedTimestampSeconds.WithLabelValues(itemID, libraryName, title, author, mediaType).Set(msToSeconds(item.AddedAt))
+			e.recentAddedDurationSeconds.WithLabelValues(itemID, libraryName, title, author, mediaType).Set(item.Media.Duration)
+			e.recentAddedSizeBytes.WithLabelValues(itemID, libraryName, title, author, mediaType).Set(item.Media.Size)
+		}
 	}
 
 	if absReachable {
@@ -310,6 +559,121 @@ func (e *Exporter) Run(interval time.Duration) {
 	for range t.C {
 		e.Scrape()
 	}
+}
+
+type normalizedSessionLabels struct {
+	sessionID   string
+	user        string
+	userID      string
+	libraryID   string
+	libraryName string
+	mediaType   string
+	title       string
+	author      string
+	client      string
+	model       string
+	deviceName  string
+}
+
+func sessionHour(s api.Session) string {
+	hour := int(s.StartTime) / 3600
+	if hour >= 0 && hour <= 23 {
+		return fmt.Sprintf("%02d:00", hour)
+	}
+
+	if s.StartedAt > 0 {
+		return time.UnixMilli(s.StartedAt).Local().Format("15:00")
+	}
+
+	return "unknown"
+}
+
+func sessionLabels(s api.Session, userNames map[string]string, libNames map[string]string) normalizedSessionLabels {
+	userID := valueOrUnknown(s.UserID)
+	user := userNames[s.UserID]
+	if user == "" && s.User != nil {
+		user = s.User.Username
+	}
+	if user == "" {
+		user = userID
+	}
+	user = valueOrUnknown(user)
+
+	libraryID := valueOrUnknown(s.LibraryID)
+	libraryName := libNames[s.LibraryID]
+	if libraryName == "" {
+		libraryName = libraryID
+	}
+	libraryName = valueOrUnknown(libraryName)
+
+	title := s.DisplayTitle
+	if title == "" && s.MediaMetadata != nil {
+		title = s.MediaMetadata.Title
+	}
+	title = valueOrUnknown(title)
+
+	author := valueOrUnknown(s.DisplayAuthor)
+	mediaType := valueOrUnknown(s.MediaType)
+
+	client := "unknown"
+	model := "unknown"
+	deviceName := "unknown"
+	if s.DeviceInfo != nil {
+		client = valueOrUnknown(s.DeviceInfo.ClientName)
+		model = valueOrUnknown(s.DeviceInfo.Model)
+		deviceName = valueOrUnknown(s.DeviceInfo.DeviceName)
+		if model == "unknown" && deviceName != "unknown" {
+			model = deviceName
+		}
+	}
+
+	return normalizedSessionLabels{
+		sessionID:   valueOrUnknown(s.ID),
+		user:        user,
+		userID:      userID,
+		libraryID:   libraryID,
+		libraryName: libraryName,
+		mediaType:   mediaType,
+		title:       title,
+		author:      author,
+		client:      client,
+		model:       model,
+		deviceName:  deviceName,
+	}
+}
+
+func valueOrUnknown(v string) string {
+	v = strings.TrimSpace(v)
+	if v == "" {
+		return "unknown"
+	}
+	return v
+}
+
+func progressPercent(current, duration float64) float64 {
+	if duration <= 0 {
+		return 0
+	}
+	return (current / duration) * 100
+}
+
+func msToSeconds(ms int64) float64 {
+	if ms <= 0 {
+		return 0
+	}
+	return float64(ms) / 1000
+}
+
+func envInt(name string, fallback int) int {
+	value := strings.TrimSpace(os.Getenv(name))
+	if value == "" {
+		return fallback
+	}
+	parsed, err := strconv.Atoi(value)
+	if err != nil || parsed <= 0 {
+		return fallback
+	}
+	return parsed
 }
 
 func splitOnce(s, sep string) [2]string {

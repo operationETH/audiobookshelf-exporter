@@ -11,3 +11,4 @@ compose.*.local.yaml
 
 dist/**
 scripts/
+abs-test-api.sh

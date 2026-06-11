@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -37,11 +38,18 @@ type SessionsResponse struct {
 }
 
 type Session struct {
+	ID            string         `json:"id"`
 	LibraryID     string         `json:"libraryId"`
 	UserID        string         `json:"userId"`
 	MediaType     string         `json:"mediaType"`
+	DisplayTitle  string         `json:"displayTitle"`
+	DisplayAuthor string         `json:"displayAuthor"`
 	Duration      float64        `json:"duration"`
 	TimeListening float64        `json:"timeListening"`
+	StartTime     float64        `json:"startTime"`
+	CurrentTime   float64        `json:"currentTime"`
+	StartedAt     int64          `json:"startedAt"`
+	UpdatedAt     int64          `json:"updatedAt"`
 	Date          string         `json:"date"`
 	DayOfWeek     string         `json:"dayOfWeek"`
 	User          *SessionUser   `json:"user"`
@@ -57,10 +65,40 @@ type SessionUser struct {
 type SessionDevice struct {
 	ClientName string `json:"clientName"`
 	Model      string `json:"model"`
+	DeviceName string `json:"deviceName"`
 }
 
 type MediaMetadata struct {
-	Title string `json:"title"`
+	Title         string `json:"title"`
+	AuthorName    string `json:"authorName"`
+	SeriesName    string `json:"seriesName"`
+	PublishedYear string `json:"publishedYear"`
+}
+
+type OnlineResponse struct {
+	UsersOnline  []User    `json:"usersOnline"`
+	OpenSessions []Session `json:"openSessions"`
+}
+
+type LibraryItemsResponse struct {
+	Results []LibraryItem `json:"results"`
+	Total   int           `json:"total"`
+	Limit   int           `json:"limit"`
+	Page    int           `json:"page"`
+}
+
+type LibraryItem struct {
+	ID        string           `json:"id"`
+	LibraryID string           `json:"libraryId"`
+	MediaType string           `json:"mediaType"`
+	AddedAt   int64            `json:"addedAt"`
+	Media     LibraryItemMedia `json:"media"`
+}
+
+type LibraryItemMedia struct {
+	Metadata MediaMetadata `json:"metadata"`
+	Duration float64       `json:"duration"`
+	Size     float64       `json:"size"`
 }
 
 func NewClient(baseURL, apiKey string) *Client {
@@ -112,7 +150,43 @@ func (c *Client) Users() ([]User, error) {
 }
 
 func (c *Client) ActiveStreamsCount() (int, error) {
-	return 0, nil
+	openSessions, err := c.OpenSessions()
+	if err != nil {
+		return 0, err
+	}
+	return len(openSessions), nil
+}
+
+func (c *Client) OpenSessions() ([]Session, error) {
+	var resp OnlineResponse
+	err := c.get("/api/users/online", &resp)
+	return resp.OpenSessions, err
+}
+
+func (c *Client) RecentSessions(limit int) ([]Session, error) {
+	if limit <= 0 {
+		limit = 10
+	}
+
+	var resp SessionsResponse
+	path := fmt.Sprintf("/api/sessions?sort=updatedAt&desc=1&limit=%d", limit)
+	if err := c.get(path, &resp); err != nil {
+		return nil, err
+	}
+	return resp.Sessions, nil
+}
+
+func (c *Client) RecentLibraryItems(libraryID string, limit int) ([]LibraryItem, error) {
+	if limit <= 0 {
+		limit = 10
+	}
+
+	var resp LibraryItemsResponse
+	path := fmt.Sprintf("/api/libraries/%s/items?limit=%d&sort=addedAt&desc=1", url.PathEscape(libraryID), limit)
+	if err := c.get(path, &resp); err != nil {
+		return nil, err
+	}
+	return resp.Results, nil
 }
 
 func (c *Client) Sessions() ([]Session, error) {

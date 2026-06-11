@@ -15,26 +15,29 @@
       }
     ]
   },
-  "description": "Dashboard for audiobookshelf-exporter Prometheus exporter.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "links": [
     {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": false,
-      "tags": [],
-      "targetBlank": true,
       "title": "Exporter on GitHub",
-      "tooltip": "operationETH/audiobookshelf-exporter",
       "type": "link",
-      "url": "https://github.com/operationETH/audiobookshelf-exporter"
+      "icon": "external link",
+      "tooltip": "operationETH/audiobookshelf-exporter",
+      "url": "https://github.com/operationETH/audiobookshelf-exporter",
+      "tags": [],
+      "asDropdown": false,
+      "targetBlank": true,
+      "includeVars": false,
+      "keepTime": false
     }
   ],
+  "liveNow": false,
   "panels": [
     {
+      "id": 1000,
+      "type": "row",
+      "title": "Overview",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -42,42 +45,38 @@
         "x": 0,
         "y": 0
       },
-      "id": 100,
-      "panels": [],
-      "title": "Overview",
-      "type": "row"
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 1,
+      "type": "stat",
+      "title": "Total Users",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 3,
+        "h": 5
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue",
-                "value": 0
+                "value": 0,
+                "color": "blue"
               }
             ]
           },
-          "unit": "short"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 0,
-        "y": 1
-      },
-      "id": 1,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -95,52 +94,54 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "audiobookshelf_users_total",
           "legendFormat": "Users",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Total Users",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Total Sessions",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 3,
+        "y": 1,
+        "w": 3,
+        "h": 5
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "value": 0,
+                "color": "green"
               }
             ]
           },
-          "unit": "short"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 5,
-        "w": 3,
-        "x": 3,
-        "y": 1
-      },
-      "id": 2,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -158,52 +159,54 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "audiobookshelf_sessions_total",
           "legendFormat": "Sessions",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Total Sessions",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Total Listening Time",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 6,
+        "y": 1,
+        "w": 5,
+        "h": 5
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "dtdurations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "purple",
-                "value": 0
+                "value": 0,
+                "color": "purple"
               }
             ]
           },
-          "unit": "dtdurations"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 6,
-        "y": 1
-      },
-      "id": 3,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -221,52 +224,54 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "sum(audiobookshelf_user_listening_seconds_total)",
           "legendFormat": "All-time listening",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Total Listening Time",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Books Listened",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 11,
+        "y": 1,
+        "w": 4,
+        "h": 5
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange",
-                "value": 0
+                "value": 0,
+                "color": "orange"
               }
             ]
           },
-          "unit": "short"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 11,
-        "y": 1
-      },
-      "id": 4,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -284,77 +289,145 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
+          "expr": "count(count by (title) (audiobookshelf_book_listening_seconds_total{media_type=\"book\"}))",
+          "legendFormat": "Books with activity",
+          "refId": "A",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "count(count by (title) (audiobookshelf_book_listening_seconds_total{media_type=\"book\"}))",
-          "legendFormat": "Books with activity",
-          "refId": "A"
+          }
         }
       ],
-      "title": "Books Listened",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 16,
+      "type": "stat",
+      "title": "Podcasts Listened",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 15,
+        "y": 1,
+        "w": 4,
+        "h": 5
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "orange"
+              }
+            ]
+          },
           "color": {
             "mode": "thresholds"
-          },
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.0.2",
+      "targets": [
+        {
+          "expr": "count(count by (title) (audiobookshelf_book_listening_seconds_total{media_type=\"podcast\"}))",
+          "legendFormat": "Podcasts with activity",
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 11,
+      "type": "stat",
+      "title": "Exporter Status",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 19,
+        "y": 1,
+        "w": 5,
+        "h": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
           "mappings": [
             {
+              "type": "value",
               "options": {
                 "0": {
+                  "text": "DOWN",
                   "color": "red",
-                  "index": 0,
-                  "text": "DOWN"
+                  "index": 0
                 }
-              },
-              "type": "value"
+              }
             },
             {
+              "type": "value",
               "options": {
                 "1": {
+                  "text": "UP",
                   "color": "green",
-                  "index": 1,
-                  "text": "UP"
+                  "index": 1
                 }
-              },
-              "type": "value"
+              }
             }
           ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": 0
+                "value": 0,
+                "color": "red"
               },
               {
-                "color": "green",
-                "value": 1
+                "value": 1,
+                "color": "green"
               }
             ]
           },
-          "unit": "none"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 19,
-        "y": 1
-      },
-      "id": 11,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -372,41 +445,839 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
+          "expr": "max_over_time(audiobookshelf_up[2m])",
+          "legendFormat": "Exporter",
+          "refId": "A",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "max_over_time(audiobookshelf_up[2m])",
-          "legendFormat": "Exporter",
-          "refId": "A"
+          }
         }
       ],
-      "title": "Exporter Status",
-      "type": "stat"
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
+      "id": 17,
+      "type": "table",
+      "title": "Audiobookshelf Now Playing",
+      "description": "Currently active Audiobookshelf listening sessions",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 24,
+        "h": 6
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "Audiobooks": {
+                  "text": "Audiobooks",
+                  "color": "dark-blue",
+                  "index": 0
+                },
+                "Cookbooks": {
+                  "text": "Cookbooks",
+                  "color": "dark-yellow",
+                  "index": 3
+                },
+                "Workouts": {
+                  "text": "Workouts",
+                  "color": "dark-purple",
+                  "index": 1
+                },
+                "YouTube Podcasts": {
+                  "text": "YouTube Podcasts",
+                  "color": "dark-orange",
+                  "index": 2
+                },
+                "podcasts test": {
+                  "text": "podcasts test",
+                  "color": "#393837",
+                  "index": 4
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "User"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Title"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 339
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Author"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 260
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Library"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Client"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Device"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Device Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 152
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 186
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "scope": "series",
+              "options": "Library"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "13.0.2",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "audiobookshelf_open_session_info\nand on(session_id,user,title,client,model)\n((time() - audiobookshelf_open_session_updated_timestamp_seconds) < 300)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{user}} - {{title}}",
+          "range": false,
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "device_name": true,
+              "instance": true,
+              "job": true,
+              "library_id": true,
+              "media_type": true,
+              "session_id": true,
+              "user_id": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time": 8,
+              "Value": 15,
+              "__name__": 9,
+              "author": 3,
+              "client": 5,
+              "device_name": 7,
+              "instance": 10,
+              "job": 11,
+              "library_id": 12,
+              "library_name": 4,
+              "media_type": 1,
+              "model": 6,
+              "session_id": 13,
+              "title": 2,
+              "user": 0,
+              "user_id": 14
+            },
+            "orderByMode": "manual",
+            "renameByName": {
+              "author": "Author",
+              "client": "Client",
+              "device_name": "Device Name",
+              "library_name": "Library",
+              "media_type": "Type",
+              "model": "Device",
+              "title": "Title",
+              "user": "User"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "type": "table",
+      "title": "Audiobookshelf Recently Listened",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 10,
+        "h": 13
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "Audiobooks": {
+                  "text": "Audiobooks",
+                  "color": "dark-blue",
+                  "index": 0
+                },
+                "Cookbooks": {
+                  "text": "Cookbooks",
+                  "color": "dark-yellow",
+                  "index": 3
+                },
+                "Workouts": {
+                  "text": "Workouts",
+                  "color": "dark-purple",
+                  "index": 1
+                },
+                "YouTube Podcasts": {
+                  "text": "YouTube Podcasts",
+                  "color": "dark-orange",
+                  "index": 2
+                },
+                "podcasts test": {
+                  "text": "podcasts test",
+                  "color": "#393837",
+                  "index": 4
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 96
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "User"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 86
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 91
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Title"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 208
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Author"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 240
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Library"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 143
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Client"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 164
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "scope": "series",
+              "options": "Library"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "13.0.2",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "exemplar": false,
+          "expr": "audiobookshelf_recent_session_info",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "client": false,
+              "day": true,
+              "device_name": true,
+              "instance": true,
+              "job": true,
+              "library_id": true,
+              "library_name": false,
+              "media_type": true,
+              "model": true,
+              "session_id": true,
+              "user_id": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time": 8,
+              "Value": 17,
+              "__name__": 9,
+              "author": 5,
+              "client": 6,
+              "date": 0,
+              "day": 10,
+              "device_name": 11,
+              "instance": 12,
+              "job": 13,
+              "library_id": 14,
+              "library_name": 2,
+              "media_type": 3,
+              "model": 7,
+              "session_id": 15,
+              "title": 4,
+              "user": 1,
+              "user_id": 16
+            },
+            "renameByName": {
+              "author": "Author",
+              "client": "Client",
+              "date": "Date",
+              "library_name": "Library",
+              "media_type": "Type",
+              "model": "Device",
+              "title": "Title",
+              "user": "User"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Date"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "type": "table",
+      "title": "Recently Added",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 10,
+        "y": 12,
+        "w": 14,
+        "h": 13
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "Audiobooks": {
+                  "text": "Audiobooks",
+                  "color": "semi-dark-blue",
+                  "index": 0
+                },
+                "Cookbooks": {
+                  "text": "Cookbooks",
+                  "color": "dark-yellow",
+                  "index": 3
+                },
+                "Workouts": {
+                  "text": "Workouts",
+                  "color": "dark-purple",
+                  "index": 1
+                },
+                "YouTube Podcasts": {
+                  "text": "YouTube Podcasts",
+                  "color": "dark-orange",
+                  "index": 2
+                },
+                "podcasts test": {
+                  "text": "podcasts test",
+                  "color": "#393837",
+                  "index": 4
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Library"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 146
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 114
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Title"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 551
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Author"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 265
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "scope": "series",
+              "options": "Library"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "applyToRow": false,
+                  "type": "color-background"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "13.0.2",
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "audiobookshelf_recent_added_info\n* on(item_id) group_left()\naudiobookshelf_recent_added_timestamp_seconds",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": false,
+              "__name__": true,
+              "instance": true,
+              "item_id": true,
+              "job": true,
+              "library_id": true,
+              "media_type": false
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time": 6,
+              "Value": 12,
+              "__name__": 7,
+              "author": 3,
+              "instance": 8,
+              "item_id": 9,
+              "job": 10,
+              "library_id": 11,
+              "library_name": 0,
+              "media_type": 1,
+              "series": 4,
+              "title": 2,
+              "year": 5
+            },
+            "renameByName": {
+              "Value": "Added",
+              "author": "Author",
+              "library_name": "Library",
+              "media_type": "Type",
+              "series": "Series",
+              "title": "Title",
+              "year": "Year"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Added"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Added": true,
+              "Series": true,
+              "Type": true,
+              "Year": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": 1001,
+      "type": "row",
+      "title": "Activity Trends",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 25
       },
-      "id": 101,
-      "panels": [],
-      "title": "Activity Trends",
-      "type": "row"
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 5,
+      "type": "timeseries",
+      "title": "Sessions & Users Over Time",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 12,
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -443,33 +1314,15 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 7
-      },
-      "id": 5,
       "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
         "legend": {
           "calcs": [
             "last",
@@ -485,37 +1338,62 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "audiobookshelf_sessions_total",
           "legendFormat": "Total sessions",
-          "refId": "A"
-        },
-        {
+          "refId": "A",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
+          }
+        },
+        {
           "expr": "audiobookshelf_users_total",
           "legendFormat": "Total users",
-          "refId": "B"
+          "refId": "B",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Sessions & Users Over Time",
-      "type": "timeseries"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Cumulative Listening Time by User",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 12,
+        "y": 26,
+        "w": 12,
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "dtdurations",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -552,33 +1430,15 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "dtdurations"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 7
-      },
-      "id": 6,
       "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
         "legend": {
           "calcs": [
             "last"
@@ -593,41 +1453,65 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
+          "expr": "sum by (user) (audiobookshelf_user_listening_seconds_total{user=~\"$user\"})",
+          "legendFormat": "{{user}}",
+          "refId": "A",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "sum by (user) (audiobookshelf_user_listening_seconds_total{user=~\"$user\"})",
-          "legendFormat": "{{user}}",
-          "refId": "A"
+          }
         }
       ],
-      "title": "Cumulative Listening Time by User",
-      "type": "timeseries"
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
+      "id": 1002,
+      "type": "row",
+      "title": "Users",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 34
       },
-      "id": 102,
-      "panels": [],
-      "title": "Users",
-      "type": "row"
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 7,
+      "type": "barchart",
+      "title": "Top 10 Users by Listening Time",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 35,
+        "w": 12,
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "dtdurations",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "continuous-GrYlRd"
           },
@@ -651,32 +1535,10 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "dtdurations"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 16
-      },
-      "id": 7,
       "options": {
         "barRadius": 0,
         "barWidth": 0.85,
@@ -700,21 +1562,25 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "topk(10, sum by (user) (audiobookshelf_user_listening_seconds_total))",
           "format": "table",
           "instant": true,
           "legendFormat": "{{user}}",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Top 10 Users by Listening Time",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "transformations": [
         {
           "id": "organize",
@@ -729,16 +1595,36 @@
             "renameByName": {}
           }
         }
-      ],
-      "type": "barchart"
+      ]
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 8,
+      "type": "barchart",
+      "title": "Top 10 Users by Session Count",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 12,
+        "y": 35,
+        "w": 12,
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "continuous-BlPu"
           },
@@ -762,32 +1648,10 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 16
-      },
-      "id": 8,
       "options": {
         "barRadius": 0,
         "barWidth": 0.85,
@@ -811,21 +1675,25 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "topk(10, sum by (user) (audiobookshelf_user_sessions_total))",
           "format": "table",
           "instant": true,
           "legendFormat": "{{user}}",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Top 10 Users by Session Count",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "transformations": [
         {
           "id": "organize",
@@ -840,29 +1708,44 @@
             "renameByName": {}
           }
         }
-      ],
-      "type": "barchart"
+      ]
     },
     {
+      "id": 1003,
+      "type": "row",
+      "title": "Books",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 44
       },
-      "id": 103,
-      "panels": [],
-      "title": "Books",
-      "type": "row"
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 9,
+      "type": "table",
+      "title": "Top 20 Books by Listening Time",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 45,
+        "w": 23,
+        "h": 12
       },
       "fieldConfig": {
         "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
           "color": {
             "mode": "thresholds"
           },
@@ -875,16 +1758,6 @@
               "reducers": []
             },
             "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
           }
         },
         "overrides": [
@@ -909,13 +1782,6 @@
           }
         ]
       },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 26
-      },
-      "id": 9,
       "options": {
         "cellHeight": "sm",
         "showHeader": true,
@@ -926,21 +1792,25 @@
           }
         ]
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "topk(20, sum by (title) (audiobookshelf_book_listening_seconds_total{media_type=\"book\"}))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Top 20 Books by Listening Time",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "transformations": [
         {
           "id": "organize",
@@ -958,29 +1828,44 @@
             }
           }
         }
-      ],
-      "type": "table"
+      ]
     },
     {
+      "id": 1004,
+      "type": "row",
+      "title": "Podcasts",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 57
       },
-      "id": 106,
-      "panels": [],
-      "title": "Podcasts",
-      "type": "row"
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 15,
+      "type": "table",
+      "title": "Top 20 Podcasts by Listening Time",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 58,
+        "w": 24,
+        "h": 5
       },
       "fieldConfig": {
         "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
           "color": {
             "mode": "thresholds"
           },
@@ -993,16 +1878,6 @@
               "reducers": []
             },
             "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
           }
         },
         "overrides": [
@@ -1027,13 +1902,6 @@
           }
         ]
       },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 39
-      },
-      "id": 15,
       "options": {
         "cellHeight": "sm",
         "showHeader": true,
@@ -1044,21 +1912,25 @@
           }
         ]
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "topk(20, sum by (title) (audiobookshelf_book_listening_seconds_total{media_type=\"podcast\"}))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Top 20 Podcasts by Listening Time",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "transformations": [
         {
           "id": "organize",
@@ -1076,29 +1948,36 @@
             }
           }
         }
-      ],
-      "type": "table"
+      ]
     },
     {
+      "id": 1005,
+      "type": "row",
+      "title": "Devices & Libraries",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 63
       },
-      "id": 104,
-      "panels": [],
-      "title": "Devices & Libraries",
-      "type": "row"
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 12,
+      "type": "piechart",
+      "title": "Listening Time by Client",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 64,
+        "w": 8,
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "dtdurations",
           "color": {
             "mode": "palette-classic"
           },
@@ -1108,19 +1987,10 @@
               "tooltip": false,
               "viz": false
             }
-          },
-          "mappings": [],
-          "unit": "dtdurations"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 0,
-        "y": 52
-      },
-      "id": 12,
       "options": {
         "displayLabels": [
           "percent"
@@ -1148,28 +2018,47 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
+          "expr": "sum by (client) (audiobookshelf_device_listening_seconds_total)",
+          "legendFormat": "{{client}}",
+          "refId": "A",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "sum by (client) (audiobookshelf_device_listening_seconds_total)",
-          "legendFormat": "{{client}}",
-          "refId": "A"
+          }
         }
       ],
-      "title": "Listening Time by Client",
-      "type": "piechart"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 13,
+      "type": "table",
+      "title": "Devices Detail",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 8,
+        "y": 64,
+        "w": 16,
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
           "color": {
             "mode": "thresholds"
           },
@@ -1182,16 +2071,6 @@
               "reducers": []
             },
             "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
           }
         },
         "overrides": [
@@ -1216,13 +2095,6 @@
           }
         ]
       },
-      "gridPos": {
-        "h": 9,
-        "w": 16,
-        "x": 8,
-        "y": 52
-      },
-      "id": 13,
       "options": {
         "cellHeight": "sm",
         "showHeader": true,
@@ -1233,21 +2105,25 @@
           }
         ]
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "sum by (client, model) (audiobookshelf_device_listening_seconds_total)",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Devices Detail",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "transformations": [
         {
           "id": "organize",
@@ -1266,16 +2142,31 @@
             }
           }
         }
-      ],
-      "type": "table"
+      ]
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 14,
+      "type": "table",
+      "title": "Libraries",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 73,
+        "w": 24,
+        "h": 8
       },
       "fieldConfig": {
         "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
           "color": {
             "mode": "thresholds"
           },
@@ -1288,16 +2179,6 @@
               "reducers": []
             },
             "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
           }
         },
         "overrides": [
@@ -1346,13 +2227,6 @@
           }
         ]
       },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 61
-      },
-      "id": 14,
       "options": {
         "cellHeight": "sm",
         "showHeader": true,
@@ -1363,43 +2237,49 @@
           }
         ]
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "sum by (library_name) (audiobookshelf_library_items_total)",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
-          "refId": "A"
-        },
-        {
+          "refId": "A",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
+          }
+        },
+        {
           "expr": "sum by (library_name) (audiobookshelf_library_listening_seconds_total)",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
-          "refId": "B"
-        },
-        {
+          "refId": "B",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
+          }
+        },
+        {
           "expr": "sum by (library_name) (audiobookshelf_library_sessions_total)",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
-          "refId": "C"
+          "refId": "C",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Libraries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "transformations": [
         {
           "id": "joinByField",
@@ -1433,29 +2313,49 @@
             }
           }
         }
-      ],
-      "type": "table"
+      ]
     },
     {
+      "id": 1006,
+      "type": "row",
+      "title": "Patterns",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 69
+        "y": 81
       },
-      "id": 105,
-      "panels": [],
-      "title": "Patterns",
-      "type": "row"
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 10,
+      "type": "barchart",
+      "title": "Listening Time by Day of Week",
+      "description": "",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 82,
+        "w": 24,
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "dtdurations",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "continuous-YlBl"
           },
@@ -1479,32 +2379,10 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "dtdurations"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 70
-      },
-      "id": 10,
       "options": {
         "barRadius": 0.05,
         "barWidth": 0.7,
@@ -1528,21 +2406,25 @@
         "xTickLabelRotation": 0,
         "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "label_replace(audiobookshelf_weekday_listening_seconds_total{day=\"Monday\"}, \"sortkey\", \"1\", \"day\", \".*\") or label_replace(audiobookshelf_weekday_listening_seconds_total{day=\"Tuesday\"}, \"sortkey\", \"2\", \"day\", \".*\") or label_replace(audiobookshelf_weekday_listening_seconds_total{day=\"Wednesday\"}, \"sortkey\", \"3\", \"day\", \".*\") or label_replace(audiobookshelf_weekday_listening_seconds_total{day=\"Thursday\"}, \"sortkey\", \"4\", \"day\", \".*\") or label_replace(audiobookshelf_weekday_listening_seconds_total{day=\"Friday\"}, \"sortkey\", \"5\", \"day\", \".*\") or label_replace(audiobookshelf_weekday_listening_seconds_total{day=\"Saturday\"}, \"sortkey\", \"6\", \"day\", \".*\") or label_replace(audiobookshelf_weekday_listening_seconds_total{day=\"Sunday\"}, \"sortkey\", \"7\", \"day\", \".*\")",
           "format": "table",
           "instant": true,
           "legendFormat": "{{day}}",
-          "refId": "A"
+          "refId": "A",
+          "hide": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
-      "title": "Listening Time by Day of Week",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "transformations": [
         {
           "id": "organize",
@@ -1594,76 +2476,139 @@
             "renameByName": {}
           }
         }
-      ],
-      "type": "barchart"
+      ]
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+      "id": 20,
+      "type": "barchart",
+      "title": "Listening Time by Hour of Day",
+      "description": "Total Audiobookshelf listening time grouped by session start hour.",
+      "links": [],
+      "gridPos": {
+        "x": 0,
+        "y": 91,
+        "w": 24,
+        "h": 9
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "dtdurations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "orange",
-                "value": 0
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
               }
             ]
           },
-          "unit": "short"
+          "color": {
+            "mode": "continuous-YlBl"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 15,
-        "y": 1
-      },
-      "id": 16,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "barRadius": 0.05,
+        "barWidth": 0.7,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom",
+          "showLegend": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "orientation": "vertical",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "Hour",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
-      "pluginVersion": "12.4.2",
+      "pluginVersion": "13.0.2",
       "targets": [
         {
+          "expr": "audiobookshelf_hour_listening_seconds_total",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{hour}}",
+          "refId": "A",
+          "hide": false,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "count(count by (title) (audiobookshelf_book_listening_seconds_total{media_type=\"podcast\"}))",
-          "legendFormat": "Podcasts with activity",
-          "refId": "A"
+          }
         }
       ],
-      "title": "Podcasts Listened",
-      "type": "stat"
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Listening Time",
+              "hour": "Hour"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": false,
+                "field": "Hour"
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "preload": false,
-  "refresh": "1m",
-  "schemaVersion": 42,
+  "schemaVersion": 39,
   "tags": [
     "audiobookshelf",
     "prometheus",
@@ -1672,43 +2617,44 @@
   "templating": {
     "list": [
       {
+        "type": "datasource",
+        "name": "DS_PROMETHEUS",
+        "label": "Datasource",
+        "query": "prometheus",
+        "regex": "",
+        "refresh": 1,
+        "hide": 0,
+        "skipUrlSync": false,
         "current": {
-          "text": "prometheus",
+          "text": "",
           "value": ""
         },
-        "includeAll": false,
-        "label": "Datasource",
-        "name": "DS_PROMETHEUS",
         "options": [],
-        "query": "prometheus",
-        "refresh": 1,
-        "regex": "",
-        "type": "datasource"
+        "multi": false,
+        "includeAll": false
       },
       {
-        "current": {
-          "text": "All",
-          "value": "$__all"
-        },
+        "type": "query",
+        "name": "user",
+        "label": "User",
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
         "definition": "label_values(audiobookshelf_user_listening_seconds_total, user)",
-        "includeAll": true,
-        "label": "User",
-        "multi": true,
-        "name": "user",
-        "options": [],
-        "query": {
-          "query": "label_values(audiobookshelf_user_listening_seconds_total, user)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 2,
+        "query": "label_values(audiobookshelf_user_listening_seconds_total, user)",
         "regex": "",
-        "regexApplyTo": "value",
-        "sort": 1,
-        "type": "query"
+        "refresh": 2,
+        "hide": 0,
+        "skipUrlSync": false,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [],
+        "multi": true,
+        "includeAll": true,
+        "sort": 1
       }
     ]
   },
@@ -1716,10 +2662,25 @@
     "from": "now-7d",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
   "timezone": "browser",
   "title": "audiobookshelf-exporter",
+  "uid": "audiobookshelf-exporter",
   "version": 1,
   "weekStart": "",
-  "id": null
+  "refresh": "1m",
+  "description": "Dashboard for audiobookshelf-exporter Prometheus exporter."
 }
