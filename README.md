@@ -13,6 +13,8 @@ This exporter collects listening statistics, user activity, library metrics, and
 ![Grafana Dashboard Screenshot 1](examples/grafana/screenshots/audiobookshelf-exporter_1.png)
 ![Grafana Dashboard Screenshot 2](examples/grafana/screenshots/audiobookshelf-exporter_2.png)
 ![Grafana Dashboard Screenshot 3](examples/grafana/screenshots/audiobookshelf-exporter_3.png)
+![Grafana Dashboard Screenshot 4](examples/grafana/screenshots/audiobookshelf-exporter_4.png)
+
 
 Example dashboard JSON:  
 - `examples/grafana/audiobookshelf-dashboard.json` — Grafana classic schema  
